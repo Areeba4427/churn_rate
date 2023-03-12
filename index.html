@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.6.3.slim.min.js"
+        integrity="sha256-ZwqZIVdD3iXNyGHbSYdsmWP//UBokj2FHAxKuSBKDSo=" crossorigin="anonymous"></script>
+    <title>PEC</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <form>
+        <div class="energy-saving">
+            <div class="cal-div">
+                <div class="existing child">
+
+                    <input type="hidden" name="submission_id" id="submission_id">
+
+
+                    <div class="label5 lab">
+                        <label>The total amount of users
+                            <p class="body">The total amount of costumers that pay for your service every month.</p>
+                        </label>
+                        <input type="number" id="total-users" value="2000">
+
+                    </div>
+                    <div class="label6 lab">
+                        <label>Lost users last month
+                            <p class="body">The total amount of costumers who closed their account month.</p>
+                        </label>
+                        <input type="number" id="lost-users" value='50'>
+
+                    </div>
+
+
+                    <div class="label7 lab">
+                        <label>Average account monthly value
+                            <p class="body">How much on average each account generate sales per month.</p>
+                        </label>
+                        <input id="monthly-value" type="number" value="30.00">
+                        <span class="currency">$</span>
+
+                    </div>
+
+
+
+                    <hr>
+                    <div class="button-cal">
+                        <button class="calculate-button" type="button"
+                            onclick="cal_churn(), generateId()">Calculate</button>
+                    </div>
+                    <hr>
+                    <div class="label8 lab">
+                        <label>Churn Rate
+                            <p class="body">Your calculated churn rate for the last month.</p>
+                        </label>
+                        <input id="churn-rate" type="text" class="no-border" value="2.50%" readonly>
+
+                    </div>
+                    <div class="label9 lab">
+                        <label>Lost revenue due to churn (1 Month)
+                            <p class="body">The amount of lost revenue due to churn.</p>
+                        </label>
+                        <input id="lost-revenue" type="text" class="no-border" value="$15,000.00" readonly>
+
+
+                    </div>
+                </div>
+
+            </div>
+            <hr>
+            <div class="result-div">
+
+                <div class="result1">
+
+                    <label id="result-kwh" class="result-label head-result">What if I improve churn by <span
+                            id="rate">16%</span> month-over-month? </label>
+                    <div id="wrapper">
+                        <input type="range" min="0" max="100" value="16" step="1" class='range' id="range3">
+                    </div>
+                </div>
+
+
+                <div class="result2">
+
+                    <label class="result-label  head-result" id="result-cost">Recovered revenue in 1 month</label>
+                    <span class="result-fig result-label" id="recovered-monthly-rev">$240.00</span>
+                </div>
+
+                <div class="result1">
+
+                    <label id="result-kwh" class="result-label head-result">Recovered revenue in 1 year</label>
+                    <span class="result-fig result-label" id="recovered-annual-rev">$2880.00</span>
+                </div>
+
+            </div>
+
+
+            <div class="multiple-container">
+                <button class="share-button" type="button" onclick="getShareLink()"><i class="fas fa-share"></i> Get
+                    Share Link</button>
+                <button class="download-button" type="button"><i class="fas fa-download"></i> Download</button>
+            </div>
+
+
+    </form>
+    <script>
+        var slider = document.getElementById("range3");
+
+        function slider_cal() {
+
+            $("#rate").html(slider.value + "%");
+
+
+            var total = parseInt(document.getElementById("total-users").value);
+            var lost = parseInt(document.getElementById("lost-users").value);
+            var account_value = parseFloat(document.getElementById("monthly-value").value);
+
+
+            var old_churn_rate = (lost / total) * 100;
+            var lost_revenue = (lost * account_value);
+            var new_rate = ((old_churn_rate / 100) * (1 - (slider.value / 100))) * 100;
+
+
+            var recovered = (new_rate * total) / 100;
+            var lost_revenue_new = recovered * account_value;
+            var tot = lost_revenue - lost_revenue_new;
+            console.log(tot, recovered, lost_revenue, lost_revenue_new, new_rate, old_churn_rate, lost_revenue);
+
+            document.getElementById("recovered-monthly-rev").textContent = formatter.format(tot);
+            document.getElementById("recovered-annual-rev").textContent = formatter.format(tot * 12);
+
+        }
+
+
+
+        slider.addEventListener("input", slider_cal);
+
+        const formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+
+        });
+
+
+        function cal_churn() {
+
+            var total = parseInt(document.getElementById("total-users").value);
+            var lost = parseInt(document.getElementById("lost-users").value);
+            var account_value = parseFloat(document.getElementById("monthly-value").value);
+
+            var churn_rate = (lost / total) * 100;
+
+            document.getElementById("churn-rate").value = (churn_rate).toFixed(2) + "%"
+            console.log(churn_rate);
+
+
+            var lost_revenue = lost * account_value;
+            document.getElementById("lost-revenue").value = "-" + formatter.format(lost_revenue);
+            slider_cal();
+
+        }
+
+
+
+        function generateId() {
+            var submissionId = new Date().getTime();
+            // Generate a unique identifier here
+            document.getElementById("submission_id").value = submissionId;
+        }
+
+        function getShareLink() {
+            // Send a request to the server-side script to get the shareable URL
+            var submissionId = document.getElementById("submission_id").value;
+            var request = new XMLHttpRequest();
+            request.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var shareLink = this.responseText;
+                    // Display the shareable URL to the user
+                    alert("Share this link: " + shareLink);
+                }
+            };
+            request.open("GET", "get_share_link.php?submission_id=" + submissionId, true);
+            request.send();
+        }
+
+    </script>
+</body>
