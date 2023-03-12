@@ -55,7 +55,7 @@
                     <hr>
                     <div class="button-cal">
                         <button class="calculate-button" type="button"
-                            onclick="cal_churn(), generateId()">Calculate</button>
+                            onclick="cal_churn()  ,generateShareLink()">Calculate</button>
                     </div>
                     <hr>
                     <div class="label8 lab">
@@ -171,26 +171,44 @@
 
 
 
-        function generateId() {
-            var submissionId = new Date().getTime();
-            // Generate a unique identifier here
-            document.getElementById("submission_id").value = submissionId;
-        }
+        // function generateId() {
+        //     var submissionId = new Date().getTime();
+        //     // Generate a unique identifier here
+        //     document.getElementById("submission_id").value = submissionId;
+        // }
+        function generateShareLink() {
+  // Get the current form data as an object
+  const formData = getFormData();
 
-        function getShareLink() {
-            // Send a request to the server-side script to get the shareable URL
-            var submissionId = document.getElementById("submission_id").value;
-            var request = new XMLHttpRequest();
-            request.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    var shareLink = this.responseText;
-                    // Display the shareable URL to the user
-                    alert("Share this link: " + shareLink);
-                }
-            };
-            request.open("GET", "get_share_link.php?submission_id=" + submissionId, true);
-            request.send();
-        }
+  // Convert the form data object to a query string
+  const queryString = Object.keys(formData).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(formData[key])}`).join('&');
+
+  // Construct the share link URL with the query string parameter
+  const shareLink = `https://areeba4427.github.io/churn_rate/?${queryString}`;
+
+  // Copy the share link to the clipboard
+  copyToClipboard(shareLink);
+}
+
+function getFormData() {
+  const form = document.querySelector('#my-form'); // Replace with your form ID
+  const formData = new FormData(form);
+  const data = {};
+  for (const [key, value] of formData.entries()) {
+    data[key] = value;
+  }
+  return data;
+}
+
+function copyToClipboard(text) {
+  const el = document.createElement('textarea');
+  el.value = text;
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+}
+
 
     </script>
 </body>
