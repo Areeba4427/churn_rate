@@ -408,7 +408,7 @@ input[type="range"] {
 @media all and (max-width:2160px) {
     form {
         width: 1600px;
-        margin-top: 200px !important
+        margin-top: 300px !important
     }
 
     input {
@@ -428,7 +428,7 @@ input[type="range"] {
 
     .currency {
         position: absolute;
-        top: 23%;
+        top: 19%;
     }
 
     .result-label {
